@@ -1,0 +1,205 @@
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, Image } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+// --- Signup Screen ---
+const SignupScreen = ({ navigation }) => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+
+  const validateSignup = () => {
+    const usernameRegex = /^[A-Za-z]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\+92-3\d{2}-\d{7}$/;
+
+    if (!username.match(usernameRegex)) {
+      Alert.alert('Invalid Username', 'Username should contain alphabets only.');
+      return false;
+    }
+    if (!email.match(emailRegex)) {
+      Alert.alert('Invalid Email', 'Enter a valid email address.');
+      return false;
+    }
+    if (!phone.match(phoneRegex)) {
+      Alert.alert('Invalid Phone', 'Phone number should match +92-3xx-xxxxxxx.');
+      return false;
+    }
+    if (password.length < 6) {
+      Alert.alert('Invalid Password', 'Password should be at least 6 characters.');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSignup = () => {
+    if (validateSignup()) {
+      // Navigate directly to Profile Screen after successful Signup
+      navigation.navigate('Profile');
+    }
+  };
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.heading}>Signup</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Phone (+92-3xx-xxxxxxx)"
+        keyboardType="phone-pad"
+        value={phone}
+        onChangeText={setPhone}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+      <TouchableOpacity style={styles.button} onPress={handleSignup}>
+        <Text style={styles.buttonText}>Signup</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+};
+
+// --- Login Screen ---
+const LoginScreen = ({ navigation }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    if (email === '' || password === '') {
+      Alert.alert('Invalid Input', 'Please fill all fields.');
+    } else {
+      navigation.navigate('Profile');
+    }
+  };
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.heading}>Login</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+};
+
+// --- Profile Screen ---
+const ProfileScreen = () => {
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.heading}>My Profile</Text>
+      <View style={styles.profileCard}>
+        <Image
+          source={require('./assets/images/profile.jpg')} // Update with your image path
+          style={styles.profileImage}
+        />
+        <Text style={styles.profileName}>Zarnab Imran</Text>
+        <Text style={styles.profileStats}>55,850 Product Sells</Text>
+        <Text style={styles.profileStats}>300bil+ Earning</Text>
+      </View>
+    </ScrollView>
+  );
+};
+
+// --- Navigation ---
+const Stack = createStackNavigator();
+
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Signup">
+        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+// --- Styles ---
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    padding: 20,
+    backgroundColor: '#F6F2E9',
+    justifyContent: 'center',
+  },
+  heading: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 15,
+    backgroundColor: '#fff',
+  },
+  button: {
+    backgroundColor: '#007BFF',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  profileCard: {
+    backgroundColor: '#F9EED4',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 15,
+  },
+  profileName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  profileStats: {
+    fontSize: 16,
+    color: '#888',
+  },
+});
+
+export default App;
